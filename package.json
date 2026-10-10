@@ -1,0 +1,24 @@
+{
+  "name": "dsh-voice-push-to-talk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Push-to-talk for DSH: hold Space in the composer to record, release to transcribe into the draft",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [],
+      "platform": "web",
+      "external": []
+    }
+  }
+}
