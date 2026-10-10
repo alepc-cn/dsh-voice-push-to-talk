@@ -1,0 +1,6 @@
+# Add only our plugin row. Does not replace or wrap any official DSH component;
+# the speech Remote and the composer slot it uses come from the already enabled
+# @deepseek-ai/dsh-experimental-voice-input-bundle.
+- insert:
+    - id: voice-push-to-talk
+      name: dsh-voice-push-to-talk
