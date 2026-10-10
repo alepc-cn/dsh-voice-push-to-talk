@@ -5,6 +5,10 @@
   "description": "Push-to-talk for DSH: hold Space in the composer to record, release to transcribe into the draft",
   "type": "module",
   "main": "lib/index.js",
+  "engines": {
+    "node": ">=22",
+    "dsh": "0.2.0-rc.2"
+  },
   "exports": {
     ".": "./lib/index.js",
     "./client": "./lib/client.js",
