@@ -4,6 +4,23 @@
 
 短按空格（< 220 ms）仍然是**普通空格**，所以日常打字不受影响。
 
+## 兼容性
+
+**目标版本：DSH Desktop `0.2.0-rc.2`**（本插件即在该版本上开发和验证；对应 Electron 44、Node 24.18.1）。`package.json` 里以 `engines.dsh` 声明了这一版本。
+
+它依赖该版本的以下接口。DSH 将来若改动这些名字，插件可能失效：
+
+| 接口 | 用途 |
+|---|---|
+| 槽位 `conversation.input.right` | 挂载状态控件；`kind: "list"`，注册必须带 `id` |
+| 语音 Remote `remote.speech` | 转写服务，由 `@deepseek-ai/dsh-experimental-voice-input-bundle` 提供 |
+| 会话绑定属性 `inputActions`（`uiSession.current`） | 把转写文字插入草稿 |
+| Cordis 注入语义 | 读取点号服务名必须来自注入过它的上下文 |
+
+**怎么查看你那台机器的版本**：插件页里官方 Bundle 后面标的版本号就是你的 DSH 版本。如果 `@deepseek-ai/dsh-base` 和 `@deepseek-ai/dsh-web-app` 都显示 `0.2.0-rc.2`，就与本插件验证过的版本一致。
+
+**版本不一致时会怎样**：不会导致 DSH 起不来。插件拿不到所需接口时，只在输入框旁显示一行原因，或在控件未能挂载时于左下角给出红条提示；随时可以在插件页禁用它。
+
 ## 依赖与启动安全
 
 功能上复用已启用的语音输入 Bundle：转写走 `remote.speech`，草稿插入走会话绑定的 `inputActions`。所以要先启用 `@deepseek-ai/dsh-experimental-voice-input-bundle` 并备好模型。
