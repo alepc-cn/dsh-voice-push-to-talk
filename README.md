@@ -69,7 +69,7 @@
 ## 已知边界
 
 - 录到空音频、转写失败、草稿在录音期间被改动时，会在输入框旁显示一行红字提示，6 秒后消失；失败时**不会**插入半截文字，**下一次长按会立刻清除提示并重试**。
-- 语音 Bundle 未启用时会提示「语音服务未启用：请先在插件页启用语音输入 Bundle」，此时不录音。
+- 语音 Bundle 未启用时会提示「语音服务未就绪：请先在插件页启用语音输入 Bundle」，此时不录音。
 - 转写结果需要你确认后再发送，不会自动发送。
 - "本地识别"指运行 DSH 的那台机器。
 - 空格归属：长按被本插件接管后，**无法再用长按空格连续输入空格**；连续空格请用短按或粘贴。
@@ -80,7 +80,7 @@
 
 浏览器插件写不了文件，而控制台不是谁都能看。所以插件把轨迹写进 **Local Storage**（键 `dsh-voice-push-to-talk.trace`）——Chromium 把它落在应用数据目录的 LevelDB 里，因此这条日志**会真正落盘**，事后可以直接读，不需要用户提供任何输出。
 
-记录的事件：`activate` / `listeners-attached` / `slot-declared` / `slot-registered` / `slot-register-failed` / `armed`（附带句柄来源与 `uiSession` 是否可用）/ `watchdog` / 前 8 次 `space` 的现场（焦点元素、锚点、作用域、句柄、锁定）/ `stall`（含原因与现场）/ `record-start` / `record-stop` / `transcribe` / `insert` / `fail`。环形缓冲保留最近 80 条，内容为纯 ASCII（非 ASCII 转义），便于在原始存储中检索。
+记录的事件：`activate` / `listeners-attached` / `slot-declared` / `slot-registered` / `slot-register-failed` / `speech-ready`（含 `remote.speech` 是否可读）/ `armed`（句柄来源与 `uiSession`）/ `watchdog` / 前 8 次 `space` 的现场（焦点、锚点、作用域、句柄、锁定）/ `hold-timer` / `keyup`（含按住时长）/ `begin-bail` / `begin-returned` / `begin-rejected` / `catalog` / `catalog-timeout` / `record-start` / `record-stop` / `transcribe` / `insert` / `tap-space` / `stall` / `fail`。环形缓冲保留最近 120 条，内容为纯 ASCII（非 ASCII 转义），便于在原始存储中检索。
 
 读取：
 
@@ -96,6 +96,6 @@ Chromium 对 Local Storage 的刷盘有延迟，操作后约 10 秒再读最稳�
 
 - `manifest-verify.js`：复刻**安装器**的 `dsh.bundle` 接受规则（含"缺声明即拒"的复现）与 app-boot 的 patch 解析，并用 Host 自带的 js-yaml 解析补丁；再用 Host 的 `parseDshClient`/`clientExportOf` 校验客户端声明。含 6 项反向控制。
 - `slots-verify.js`：从 app.asar 读出真实槽位声明表，断言本插件只注册进 `list` 槽位、且该注册带 `id`（缺 `id` 会被拒绝，正是控件一直没挂载的原因）；并以 `conversation.input.activity`（`single`）作为崩溃回归对照。
-- `ptt-verify.js`：桩环境驱动引擎，覆盖短按/长按/输入法/焦点范围/取消/语音服务缺失降级/仅靠会话绑定插入，以及落盘轨迹内容，共 50 项；DOM 使用带真实 `contains`/`querySelector` 语义的嵌套结构。
+- `ptt-verify.js`：桩环境驱动引擎，覆盖短按/长按/输入法/焦点范围/取消/语音服务缺失降级/仅靠会话绑定插入/目录调用挂起，以及落盘轨迹内容，共 54 项；DOM 使用带真实 `contains`/`querySelector` 语义的嵌套结构。
 - `wav-verify.js`：从**已安装的 app.asar** 里取出 Host 自己的 `validateWave`，验证本插件的 WAV 编码器被接受（并反向验证校验器确实会拒绝坏头）。
 - `read-trace.js`：读取插件落盘的轨迹日志（见上文「日志」）。
